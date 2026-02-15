@@ -90,7 +90,7 @@ router.get('/', (req, res) => {
     endpoints: [
       '/new-anime',
       '/search-anime?q=',
-      '/anime-detail/:id',
+      '/anime-detail/:animeUrl',
       '/list-anime',
       '/jadwal-anime',
       '/latest-domain',
