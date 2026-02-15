@@ -190,7 +190,7 @@ function normalizeUrlToLatestDomain(inputUrl) {
       .each((_, p) => synopsisParts.push($(p).text().trim()));
 
     //epsTotal 
-    const epsTotal = getSecondTwoDots(filmStats.find('p').eq(6).text()) || episodeList.length.toString();
+    const epsTotal = getSecondTwoDots(filmStats.find('p').eq(6).text());
     const minutesPerEp = getSecondTwoDots(filmStats.find('p').eq(7).text());
     const thumbnailUrl = normalizeUrlToLatestDomain($('div.fotoanime > img').attr('src') ?? '');
 
