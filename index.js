@@ -33,15 +33,54 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // middleware API key
-router.use((req, res, next) => {
-  const apiKey = req.headers['x-api-key'];
-  if (apiKey === privatekey) return next();
+const API_ENABLED = process.env.API_ENABLED === 'true';
+const API_MODE = process.env.API_MODE || 'public';
+const API_KEY = process.env.API_KEY;
 
-  res.status(403).json({
-    status: 403,
-    message: 'Forbidden: Invalid API Key'
+router.use((req, res, next) => {
+  // 1️⃣ Global OFF
+  if (!API_ENABLED) {
+    return res.status(503).json({
+      status: 503,
+      message: 'API temporarily disabled'
+    });
+  }
+
+  const apiKey = req.headers['x-api-key'];
+
+  // 2️⃣ MODE PUBLIC → langsung lanjut
+  if (API_MODE === 'public') {
+    req.auth = { mode: 'public' };
+    return next();
+  }
+
+  // 3️⃣ MODE PRIVATE → wajib key
+  if (API_MODE === 'private') {
+    if (!apiKey) {
+      return res.status(401).json({
+        status: 401,
+        message: 'API key required'
+      });
+    }
+
+    if (apiKey !== API_KEY) {
+      return res.status(403).json({
+        status: 403,
+        message: 'Invalid API key'
+      });
+    }
+
+    req.auth = { mode: 'private' };
+    return next();
+  }
+
+  // 4️⃣ Kalau config salah
+  return res.status(500).json({
+    status: 500,
+    message: 'Invalid API_MODE configuration'
   });
 });
+
 
 // ===== ROOT =====
 router.get('/', (req, res) => {
