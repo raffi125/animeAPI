@@ -122,7 +122,7 @@ router.get('/search-anime', async (req, res) => {
 });
 
 // ===== DETAIL =====
-router.get('/anime-detail/:id', async (req, res) => {
+router.get('/anime-detail/:animeUrl', async (req, res) => {
   try {
     const data = await animeDetail(req.params.id);
     res.json(data);
